@@ -12,7 +12,7 @@ from .views.EmployeeView import employee_api as employee_blueprint
 # import guest_api blueprint
 from .views.GuestView import guest_api as guest_blueprint
 # import img_proc_api blueprint
-from img_proc.script import img_proc_api as img_proc_blueprint
+from ..img_proc.script import img_proc_api as img_proc_blueprint
 
 
 def create_app(env_name):
