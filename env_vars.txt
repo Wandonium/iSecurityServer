@@ -1,0 +1,4 @@
+export FLASK_ENV=development
+export DB_URL=postgres:///isecurity_db
+export JW_SECRET_KEY=wandonium@techcloud.co.ke
+export UPLOAD_FOLDER=./
