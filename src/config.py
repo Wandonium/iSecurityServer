@@ -17,6 +17,7 @@ class Production(object):
   DEBUG = False
   TESTING = False
   SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+  SQLALCHEMY_TRACK_MODIFICATIONS=False
   JWT_SECRECT_KEY = os.getenv('JWT_SECRET_KEY')
   UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
 
