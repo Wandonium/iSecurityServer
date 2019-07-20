@@ -16,9 +16,11 @@ def create():
     return custom_response("Error! Check if json object contains all the required attributes", 400)
   
   # check if building already exist in db
-  if BuildingModel.check_geo(data.get('latitude'), data.get('longitude')):
-    message = {'error': 'Building already exist, please supply different latitude and longitude'}
-    return custom_response(message, 400)
+  buildings = BuildingModel.get_all_buildings()
+  for building in buildings:
+    if building.latitude == data.get('latitude') and building.longitude == data.get('longitude'):
+      message = {'error': 'Building already exist, please supply different latitude and longitude'}
+      return custom_response(message, 400)
   building = BuildingModel(data)
   building.save()
   data = building_schema.dump(building).data

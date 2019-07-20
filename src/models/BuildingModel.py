@@ -56,15 +56,6 @@ class BuildingModel(db.Model):
   @staticmethod
   def get_one_building(id):
     return BuildingModel.query.get(id)
-
-  @staticmethod
-  def check_geo(lat, long):
-    buildings = BuildingModel.query.all()
-    for building in buildings:
-      if building.latitude == lat and building.longitude == long:
-        return True
-      else:
-        return False
   
   def __repr(self):
     return '<id {}>'.format(self.id)
