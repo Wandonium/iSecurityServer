@@ -22,6 +22,13 @@ def create():
   if company_in_db:
     message = {'error': 'Company already exist, please supply another company email'}
     return custom_response(message, 400)
+
+  # check for unique phone number
+  companies = CompanyModel.get_all_companies()
+  for company in companies:
+    if company.phone_no == data.get('phone_no'):
+      message = {'error':'company must have a unique phone number'}
+      return custom_response(message, 400)
   
   company = CompanyModel(data)
   company.save()

@@ -22,6 +22,13 @@ def create():
   if guard_in_db:
     message = {'error': 'Guard already exist, please supply another guard ID'}
     return custom_response(message, 400)
+
+  # check for unique phone number
+  guards = GuardModel.get_all_guards()
+  for guard in guards:
+    if guard.phone_no == data.get('phone_no'):
+      message = {'error':'Guard must have a unique phone number'}
+      return custom_response(message, 400)
   
   guard = GuardModel(data)
   guard.save()
