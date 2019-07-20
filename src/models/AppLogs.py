@@ -48,6 +48,10 @@ class AppLogsModel(db.Model):
   @staticmethod
   def get_one_app_log(id):
     return AppLogsModel.query.get(id)
+
+  @staticmethod
+  def get_app_log_by_user_id(value):
+    return AppLogsModel.query.filter_by(user_id=value).order_by(AppLogsModel.id.desc()).first()
   
   def __repr(self):
     return '<id {}>'.format(self.id)

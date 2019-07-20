@@ -1,12 +1,14 @@
 from flask import request, json, Response, Blueprint, g
 from ..models.EmployeeModel import EmployeeModel, EmployeeSchema
 from ..models.GuardModel import GuardModel, GuardSchema
+from ..models.AppLogs import AppLogsModel, AppLogsSchema
 from ..shared.Authentication import Auth
 import sqlalchemy
 
 employee_api = Blueprint('employees', __name__)
 employee_schema = EmployeeSchema()
 
+# used to both create an employee in the db and sign them in by a guard
 @employee_api.route('/', methods=['POST'])
 def create():
   """
@@ -42,6 +44,7 @@ def create():
   ser_data = employee_schema.dump(employee).data
   return custom_response(ser_data, 201)
 
+# returns a specific employee given the db id
 @employee_api.route('/<int:employee_id>', methods=['GET'])
 @Auth.auth_required
 def get_an_employee(employee_id):
@@ -54,6 +57,7 @@ def get_an_employee(employee_id):
   ser_employee = employee_schema.dump(employee).data
   return custom_response(ser_employee, 200)
 
+# used to sign out an employee by a guard
 @employee_api.route('/<int:emp_id>', methods=['PUT'])
 @Auth.auth_required
 def update(emp_id):
@@ -86,6 +90,7 @@ def delete(emp_id):
   employee.delete()
   return custom_response({'message': 'deleted'}, 204)
 
+# returns all the employees in the employee table
 @employee_api.route('/', methods=['GET'])
 @Auth.auth_required
 def get_all():
@@ -93,7 +98,7 @@ def get_all():
   ser_employees = employee_schema.dump(employees, many=True).data
   return custom_response(ser_employees, 200)
 
-
+# used to login a receptionist
 @employee_api.route('/login', methods=['POST'])
 def login():
   req_data = request.get_json()
@@ -115,10 +120,42 @@ def login():
   if not employee.check_hash(data.get('password')):
     return custom_response({'error': 'invalid credentials'}, 400)
 
+  # generate app log
+  app_log = {"user_id": data.get('employeeId')}
+  app_data, error = AppLogsSchema().load(app_log)
+
+  if error:
+    return custom_response(error, 400)
+
+  theAppLog = AppLogsModel(app_data)
+  theAppLog.save()
+
   ser_emp =  employee_schema.dump(employee).data
   return custom_response(ser_emp, 200)
 
+# record receptionist logout of app using AppLogs table
+@employee_api.route("/logout", methods=['POST'])
+@Auth.auth_required
+def logout():
+  req_data = request.get_json()
+  data, error = AppLogsSchema().load(req_data)
+  if error:
+    return custom_response(error, 400)
+
+  app_log = AppLogsModel.get_app_log_by_user_id(data.get('user_id'))
+  if not app_log:
+    message = {'error':'This employee has never logged in'}
+    return custom_response(message, 400)
+  if app_log.logout_time != None:
+    message = {'error':'Logging out without first logging in'}
+    return custom_response(message, 400)
+  app_log.update(data)
+  ser_data = AppLogsSchema().dump(app_log).data
+  return custom_response(ser_data, 200)
+
+# return all employees who have not been signed out by guard
 @employee_api.route("/sign_out", methods=['GET'])
+@Auth.auth_required
 def sign_out():
   emps = EmployeeModel.get_employee_by_time_out()
   if emps:
@@ -127,6 +164,19 @@ def sign_out():
   else:
     message = {'error':'No employees to sign out found. Sign In an employee first.'}
     return custom_response(message, 400)
+
+# get all employees who are receptionists
+@employee_api.route("/receptionists", methods=['GET'])
+@Auth.auth_required
+def get_all_receptionists():
+  emps = EmployeeModel.get_all_receptionists()
+  if emps:
+    ser_data = employee_schema.dump(emps, many=True).data
+    return custom_response(ser_data, 200)
+  else:
+    message = {'error':'No receptionists found. Please register one.'}
+    return custom_response(message, 400)
+    
   
 
 def custom_response(res, status_code):

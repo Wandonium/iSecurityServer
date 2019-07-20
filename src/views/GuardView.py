@@ -1,5 +1,6 @@
 from flask import request, json, Response, Blueprint, g
 from ..models.GuardModel import GuardSchema, GuardModel
+from ..models.AppLogs import AppLogsSchema, AppLogsModel
 from ..shared.Authentication import Auth
 
 guard_api = Blueprint('guards', __name__)
@@ -106,7 +107,37 @@ def login():
 
   ser_data = guard_schema.dump(guard).data
   token = Auth.generate_token(ser_data.get('id'))
+
+  # generate app log
+  app_log = {"user_id": data.get('guardId')}
+  app_data, error = AppLogsSchema().load(app_log)
+
+  if error:
+    return custom_response(error, 400)
+
+  theAppLog = AppLogsModel(app_data)
+  theAppLog.save()
+  
   return custom_response({'jwt_token':token, "guard": ser_data}, 200)
+
+@guard_api.route("/logout", methods=['POST'])
+@Auth.auth_required
+def logout():
+  req_data = request.get_json()
+  data, error = AppLogsSchema().load(req_data)
+  if error:
+    return custom_response(error, 400)
+
+  app_log = AppLogsModel.get_app_log_by_user_id(data.get('user_id'))
+  if not app_log:
+    message = {'error':'This guard has never logged in'}
+    return custom_response(message, 400)
+  if app_log.logout_time != None:
+    message = {'error':'Logging out without first logging in'}
+    return custom_response(message, 400)
+  app_log.update(data)
+  ser_data = AppLogsSchema().dump(app_log).data
+  return custom_response(ser_data, 200)
   
 
 def custom_response(res, status_code):

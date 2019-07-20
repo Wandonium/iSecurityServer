@@ -13,7 +13,7 @@ def create():
   req_data = request.get_json()
   data, error = building_schema.load(req_data)
   if error:
-    return custom_response(error, 400)
+    return custom_response("Error! Check if json object contains all the required attributes", 400)
   
   # check if building already exist in db
   if BuildingModel.check_geo(data.get('latitude'), data.get('longitude')):

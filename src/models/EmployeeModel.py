@@ -85,6 +85,10 @@ class EmployeeModel(db.Model):
   def get_receptionist(empId):
     return EmployeeModel.query.filter_by(employeeId=empId).first()
 
+  @staticmethod
+  def get_all_receptionists():
+    return EmployeeModel.query.filter_by(role="Receptionist")
+
   def __generate_hash(self, password):
     return bcrypt.generate_password_hash(password, rounds=10).decode("utf-8")
   

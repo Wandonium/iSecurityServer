@@ -13,6 +13,8 @@ from .views.EmployeeView import employee_api as employee_blueprint
 from .views.GuestView import guest_api as guest_blueprint
 # import img_proc_api blueprint
 from .img_proc.script import img_proc_api as img_proc_blueprint
+# import app_log_api blueprint
+from .views.AppLogsView import app_log_api as app_log_blueprint
 
 
 def create_app(env_name):
@@ -37,6 +39,7 @@ def create_app(env_name):
   app.register_blueprint(employee_blueprint, url_prefix='/api/v1/employees')
   app.register_blueprint(guest_blueprint, url_prefix='/api/v1/guests')
   app.register_blueprint(img_proc_blueprint, url_prefix='/api/v1/img_proc')
+  app.register_blueprint(app_log_blueprint, url_prefix='/api/v1/app_logs')
 
   @app.route('/', methods=['GET'])
   def index():

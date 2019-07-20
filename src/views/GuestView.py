@@ -8,6 +8,7 @@ from ..models.CompanyModel import CompanyModel, CompanySchema
 guest_api = Blueprint('guests', __name__)
 guest_schema = GuestSchema()
 
+# used to both create a guest record in the db and sign them in by a guard
 @guest_api.route('/', methods=['POST'])
 @Auth.auth_required
 def create():
@@ -61,6 +62,7 @@ def create():
   data = guest_schema.dump(guest).data
   return custom_response(data, 201)
 
+# returns a guest record given the db id
 @guest_api.route('/<int:guest_id>', methods=['GET'])
 @Auth.auth_required
 def get_one(guest_id):
@@ -73,6 +75,7 @@ def get_one(guest_id):
   data = guest_schema.dump(guest).data
   return custom_response(data, 200)
 
+# used to update a guest record as well as sign out a guest by a guard
 @guest_api.route('/<int:guest_id>', methods=['PUT'])
 @Auth.auth_required
 def update(guest_id):
@@ -96,6 +99,7 @@ def update(guest_id):
   data = guest_schema.dump(guest).data
   return custom_response(data, 200)
 
+# returns all the guest records in the db
 @guest_api.route('/', methods=['GET'])
 @Auth.auth_required
 def get_all():
@@ -118,7 +122,9 @@ def delete(guest_id):
   guest.delete()
   return custom_response({'message':'deleted'}, 204)
 
+# returns all the guests who have not been signed out by a guard
 @guest_api.route("/sign_out", methods=['GET'])
+@Auth.auth_required
 def sign_out():
   guests = GuestModel.get_guests_by_time_out()
   if guests:
