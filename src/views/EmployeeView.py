@@ -72,7 +72,7 @@ def update(emp_id):
   if error:
     return custom_response(error, 400)
 
-  if employee.time_in > data.get('time_out'):
+  if employee.time_in >= data.get('time_out'):
     message = {'error': 'time_out is ealier than time_in'}
     return custom_response(message, 400)
 

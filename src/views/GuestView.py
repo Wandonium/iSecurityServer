@@ -91,7 +91,7 @@ def update(guest_id):
   if error:
     return custom_response(error, 400)
 
-  if guest.time_in > data.get('time_out'):
+  if guest.time_in >= data.get('time_out'):
     message = {'error': 'time_out is ealier than time_in'}
     return custom_response(message, 400)
 
