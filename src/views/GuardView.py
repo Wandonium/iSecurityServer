@@ -36,7 +36,7 @@ def create():
   ser_data = guard_schema.dump(guard).data
   token = Auth.generate_token(ser_data.get('id'))
 
-  return custom_response({'jwt_token': token}, 201)
+  return custom_response({'jwt_token': token, 'guard': ser_data}, 201)
 
 @guard_api.route('/<int:guard_id>', methods=['GET'])
 @Auth.auth_required
