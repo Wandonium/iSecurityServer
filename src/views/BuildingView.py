@@ -27,6 +27,7 @@ def create():
   return custom_response(data, 201)
 
 @building_api.route('/<int:building_id>', methods=['GET'])
+@Auth.auth_required
 def get_one(building_id):
   """
   Get a Building
@@ -38,6 +39,7 @@ def get_one(building_id):
   return custom_response(data, 200)
 
 @building_api.route('/<int:building_id>', methods=['PUT'])
+@Auth.auth_required
 def update(building_id):
   """
   Update a Building
@@ -54,6 +56,7 @@ def update(building_id):
   return custom_response(data, 200)
 
 @building_api.route('/', methods=['GET'])
+@Auth.auth_required
 def get_all():
   """
   Get all Buildings
@@ -63,6 +66,7 @@ def get_all():
   return custom_response(data, 200)
 
 @building_api.route('/<int:building_id>', methods=['DELETE'])
+@Auth.auth_required
 def delete(building_id):
   """
   Delete a Building
