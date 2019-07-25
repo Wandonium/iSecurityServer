@@ -71,5 +71,5 @@ class BuildingSchema(Schema):
   no_of_floors = fields.Int(required=True)
   longitude = fields.Float(required=True)
   latitude = fields.Float(required=True)
-  guards = fields.Nested(GuardSchema, many=True, required=False)
-  companies = fields.Nested(CompanySchema, many=True, required=False)
+  #guards = fields.Nested(GuardSchema, many=True, required=False)
+  #companies = fields.Nested(CompanySchema, many=True, required=False)
