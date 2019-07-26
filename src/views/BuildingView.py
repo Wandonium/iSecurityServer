@@ -66,7 +66,6 @@ def get_all():
   return custom_response(data, 200)
 
 @building_api.route('/<int:building_id>', methods=['DELETE'])
-@Auth.auth_required
 def delete(building_id):
   """
   Delete a Building
