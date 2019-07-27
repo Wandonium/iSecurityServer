@@ -50,29 +50,33 @@ def get_a_guard(guard_id):
   ser_guard = guard_schema.dump(guard).data
   return custom_response(ser_guard, 200)
 
-@guard_api.route('/this', methods=['PUT'])
+@guard_api.route('/<int:guard_id>', methods=['PUT'])
 @Auth.auth_required
-def update():
+def update(guard_id):
   """
   Update this
   """
   req_data = request.get_json()
+  guard = GuardModel.get_one_guard(guard_id)
+  if not guard:
+    return custom_response({'error':'guard not found'}, 404)
   data, error = guard_schema.load(req_data, partial=True)
   if error:
     return custom_response(error, 400)
 
-  guard = GuardModel.get_one_guard(g.guard.get('id'))
   guard.update(data)
   ser_guard = guard_schema.dump(guard).data
   return custom_response(ser_guard, 200)
 
-@guard_api.route('/this', methods=['DELETE'])
+@guard_api.route('/<int:guard_id>', methods=['DELETE'])
 @Auth.auth_required
-def delete():
+def delete(guard_id):
   """
   Delete a guard
   """
-  guard = GuardModel.get_one_guard(g.guard.get('id'))
+  guard = GuardModel.get_one_guard(guard_id);
+  if not guard:
+    return custom_response({'error':'guard not found'}, 404)
   guard.delete()
   return custom_response({'message': 'deleted'}, 204)
 
