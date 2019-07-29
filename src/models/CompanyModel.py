@@ -75,4 +75,4 @@ class CompanySchema(Schema):
   floor_number = fields.Int(required=True)
   phone_no = fields.Int(required=True)
   building_id = fields.Int(required=True)
-  employees = fields.Nested(EmployeeSchema, many=True, required=False)
+  #employees = fields.Nested(EmployeeSchema, many=True, required=False)
