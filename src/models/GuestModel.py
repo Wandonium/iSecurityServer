@@ -103,7 +103,6 @@ class GuestSchema(Schema):
   time_in = fields.DateTime(required=True)
   time_out = fields.DateTime(required=True)
   guard_id = fields.Int(required=True)
-  building_id = fields.Int(required=True)
   company_id = fields.Int(required=True)
   guards = fields.Nested(GuardSchema, many=True)
   buildings = fields.Nested(BuildingSchema, many=True)

@@ -34,14 +34,6 @@ def create():
     message = {'error': 'Guard does not exists, please supply a different guard id!'}
     return custom_response(message, 400)
 
-  # check if building already exist in db
-  building_in_db = BuildingModel.get_one_building(data.get('building_id'))
-  # ser_building = BuildingSchema().dump(building_in_db).data
-  # return custom_response(ser_building, 200)
-  if not building_in_db:
-    message = {'error': 'Building does not exists, please supply a different building id!'}
-    return custom_response(message, 400)
-
   # check if company already exist in db
   company_in_db = CompanyModel.get_one_company(data.get('company_id'))
   # ser_company = CompanySchema().dump(company_in_db).data
@@ -50,11 +42,17 @@ def create():
     message = {'error': 'Company does not exists, please supply a different company id!'}
     return custom_response(message, 400)
 
+  if company_in_db.building_id != guard_in_db.building_id:
+    message = {'error': 'Company and Guard provided do not belong to the same building.'}
+    return custom_response(message, 400)
+  
+  building_in_db = BuildingModel.get_one_building(company_in_db.building_id)
+
   # check if all guest sign_ins have a sign_out
   guests = GuestModel.get_guests_by_id(data.get('guestId'))
   for guest in guests:
     if guest.time_out == None:
-      message = {'error': 'Trying to sign in employee without first signing out'}
+      message = {'error': 'Trying to sign in guest without first signing out'}
       return custom_response(message, 400)
 
   guest = GuestModel(data)
