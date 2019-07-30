@@ -89,11 +89,14 @@ def update(guest_id):
   if error:
     return custom_response(error, 400)
 
-  localGuestTime = guest.time_in.replace(tzinfo=None)
-  localTimeOut = data.get('time_out').replace(tzinfo=None)
-  if localGuestTime >= localTimeOut:
-    message = {'error': 'time_out is ealier than time_in'}
-    return custom_response(message, 400)
+  if data.get('time_out') == "null":
+    guest.time_out = sqlalchemy.sql.null()
+  else:
+    localGuestTime = guest.time_in.replace(tzinfo=None)
+    localTimeOut = data.get('time_out').replace(tzinfo=None)
+    if localGuestTime >= localTimeOut:
+      message = {'error': 'time_out is ealier than time_in'}
+      return custom_response(message, 400)
 
   guest.update(data)
   data = guest_schema.dump(guest).data
