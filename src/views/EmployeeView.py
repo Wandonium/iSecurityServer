@@ -27,7 +27,7 @@ def create():
     return custom_response(message, 400)
 
   # check if guard already exist in the db
-  guard_in_db = GuardModel.get_guard_by_guardId(data.get('guard_id'))
+  guard_in_db = GuardModel.get_one_guard(data.get('guard_id'))
   if not guard_in_db:
     message = {'error': 'Guard does not exist, please supply another guard id'}
     return custom_response(message, 400)
