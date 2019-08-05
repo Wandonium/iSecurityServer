@@ -109,7 +109,7 @@ class EmployeeSchema(Schema):
   guard_id = fields.Int(required=True)
   name = fields.Str(required=True)
   phone_no = fields.Int(required=True)
-  password = fields.Str(required=False)
+  password = fields.Str(required=True)
   role = fields.Str(required=True)
   time_in = fields.DateTime(required=True)
   time_out = fields.DateTime(required=True)
