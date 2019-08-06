@@ -1,4 +1,4 @@
-from flask import request, json, Response, Blueprint, g
+from flask import request, json, Response, Blueprint, g, current_app
 from ..models.GuardModel import GuardSchema, GuardModel
 from ..models.AppLogs import AppLogsSchema, AppLogsModel
 from ..shared.Authentication import Auth
@@ -98,6 +98,17 @@ def get_all():
   return custom_response(ser_guards, 200)
 
 
+admins = [
+  {
+    "guardId":30378296,
+    "password":"wando214"
+  },
+  {
+    "guardId":10319822,
+    "password":"abcdef"
+  }
+]
+
 @guard_api.route('/login', methods=['POST'])
 def login():
   req_data = request.get_json()
@@ -116,6 +127,11 @@ def login():
   if not guard.check_hash(data.get('password')):
     return custom_response({'error': 'invalid credentials'}, 400)
 
+  role = "other"
+  for a in admins:
+    if a["guardId"] == data.get('guardId') and a["password"] == data.get('password'):
+      role = "admin"
+
   ser_data = guard_schema.dump(guard).data
   token = Auth.generate_token(ser_data.get('id'))
 
@@ -129,7 +145,7 @@ def login():
   theAppLog = AppLogsModel(app_data)
   theAppLog.save()
   
-  return custom_response({'jwt_token':token, "guard": ser_data}, 200)
+  return custom_response({'jwt_token':token, "guard": ser_data, "role":role}, 200)
 
 @guard_api.route("/logout", methods=['POST'])
 @Auth.auth_required
