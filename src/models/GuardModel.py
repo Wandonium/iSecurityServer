@@ -40,7 +40,7 @@ class GuardModel(db.Model):
   def update(self, data):
     for key, item in data.items():
       if key == 'password':
-        self.password = self.__generate_hash(item) 
+        self.password = self.__generate_hash(value) 
       setattr(self, key, item)
     db.session.commit()
 
