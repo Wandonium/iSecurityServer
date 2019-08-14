@@ -148,7 +148,6 @@ def login():
   return custom_response({'jwt_token':token, "guard": ser_data, "role":role}, 200)
 
 @guard_api.route("/logout", methods=['POST'])
-@Auth.auth_required
 def logout():
   req_data = request.get_json()
   data, error = AppLogsSchema().load(req_data)

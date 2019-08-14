@@ -135,7 +135,6 @@ def login():
 
 # record receptionist logout of app using AppLogs table
 @employee_api.route("/logout", methods=['POST'])
-@Auth.auth_required
 def logout():
   req_data = request.get_json()
   data, error = AppLogsSchema().load(req_data)
